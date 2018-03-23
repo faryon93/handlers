@@ -34,5 +34,22 @@ import (
 //  types
 // ---------------------------------------------------------------------------------------
 
-// MiddlewareFunc is a function which implements a middleware handler.
-type MiddlewareFunc func(http.Handler) http.Handler
+// Adapter is a function which implements a middleware handler.
+type Adapter func(http.Handler) http.Handler
+
+// ---------------------------------------------------------------------------------------
+//  public functions
+// ---------------------------------------------------------------------------------------
+
+// Chain chains a http.Handler with the given adapters.
+func Chain(h http.Handler, adapters ...Adapter) http.Handler {
+	for _, adapter := range adapters {
+		h = adapter(h)
+	}
+	return h
+}
+
+// ChainFunc chains a http.HandlerFunc with the given adapater.
+func ChainFunc(h http.HandlerFunc, adapters ...Adapter) http.Handler {
+	return Chain(http.HandlerFunc(h), adapters...)
+}

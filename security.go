@@ -38,7 +38,7 @@ import (
 
 // Keyed restricts the execution of fn() to requests which
 // have the query parameter "key" matched with the user supplied key.
-func Keyed(key string) MiddlewareFunc {
+func Keyed(key string) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestKey := r.URL.Query().Get("key")
@@ -54,7 +54,7 @@ func Keyed(key string) MiddlewareFunc {
 
 // Enabled denys access to fn() if the value of the given confKey is false.
 // The value is resolved via viper.GetBool(confKey).
-func Enabled(confKey string) MiddlewareFunc {
+func Enabled(confKey string) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if confKey != "" && !viper.GetBool(confKey) {
