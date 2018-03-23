@@ -42,7 +42,7 @@ func Keyed(key string) Adapter {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestKey := r.URL.Query().Get("key")
-			if requestKey != key {
+			if requestKey != "" && requestKey != key {
 				http.Error(w, "forbidded", http.StatusForbidden)
 				return
 			}
