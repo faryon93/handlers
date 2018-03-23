@@ -15,6 +15,7 @@ A set of frequently used Go http handlers and middleware functions.
 | Handler       | Description                                                         |
 | ------------- | ------------------------------------------------------------------- |
 | NoRobots()    | Writes a robots.txt file, which disallows the access to everything. |
+| Forbidded()   | Default 403 forbidden handler.                                      |
 
 ## Content: Middleware
 

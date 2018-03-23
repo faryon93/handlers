@@ -34,32 +34,7 @@ import (
 //  public functions
 // ---------------------------------------------------------------------------------------
 
-// Keyed restricts the execution of fn() to requests which
-// have the query parameter "key" matched with the user supplied key.
-func Keyed(key string) Adapter {
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			requestKey := r.URL.Query().Get("key")
-			if key != "" && requestKey != key {
-				Forbidden(w, r)
-				return
-			}
-
-			h.ServeHTTP(w, r)
-		})
-	}
-}
-
-// Enabled denys access to fn() if enabled is false.
-func Enabled(enabled bool) Adapter {
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if !enabled {
-				http.Error(w, "handler not enabled", http.StatusNotFound)
-				return
-			}
-
-			h.ServeHTTP(w, r)
-		})
-	}
+// Forbidden returns a "403 forbidded" error.
+func Forbidden(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "403 forbidded", http.StatusForbidden)
 }
