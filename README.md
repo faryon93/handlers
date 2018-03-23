@@ -24,4 +24,4 @@ Middleware functions can be chained with the real handler function or other midd
 | Middleware        | Description                                                       |
 | ----------------- | ----------------------------------------------------------------- |
 | Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey.  |
-| Enabled(confKey)  | Denys access if the resolved bool value of confKey is false.      |
+| Enabled(en)       | Denys access if en isfalse                                        |
