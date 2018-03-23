@@ -3,6 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/faryon93/handlers)](https://goreportcard.com/report/github.com/faryon93/handlers)
 
 A set of frequently used Go http handlers and middleware functions.
+
     # download library
     $: go get github.com/faryon93/handlers
 
@@ -16,6 +17,8 @@ A set of frequently used Go http handlers and middleware functions.
 | NoRobots()    | Writes a robots.txt file, which disallows the access to everything. |
 
 ## Content: Middleware
+
+Middleware functions can be chained with the real handler function or other middle ware functions.
 
 | Middleware        | Description                                                       |
 | ----------------- | ----------------------------------------------------------------- |
