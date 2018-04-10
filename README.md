@@ -17,11 +17,12 @@ A set of frequently used Go http handlers and middleware functions.
 | NoRobots()    | Writes a robots.txt file, which disallows the access to everything. |
 | Forbidded()   | Default 403 forbidden handler.                                      |
 
-## Content: Middleware
+## Content: Adapters
 
-Middleware functions can be chained with the real handler function or other middle ware functions.
+Adapter functions can be chained with the real handler function or other adapter functions.
 
-| Middleware        | Description                                                       |
+| Adapter           | Description                                                       |
 | ----------------- | ----------------------------------------------------------------- |
 | Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey.  |
-| Enabled(en)       | Denys access if en is false                                        |
+| Enabled(en)       | Denys access if en is false                                       |
+| Benchmark         | Logs the execution time of every request using logrus             |
