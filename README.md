@@ -27,3 +27,4 @@ Adapter functions can be chained with the real handler function or other adapter
 | Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey.  |
 | Enabled(en)       | Denys access if en is false                                       |
 | Benchmark         | Logs the execution time of every request using logrus             |
+| Paged(limit)      | Paging: Parses skip and limit from query parameters               |
