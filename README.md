@@ -1,6 +1,7 @@
 # Handlers
 [![Documentation](https://godoc.org/github.com/faryon93/handlers?status.svg)](http://godoc.org/github.com/faryon93/handlers)
 [![Go Report Card](https://goreportcard.com/badge/github.com/faryon93/handlers)](https://goreportcard.com/report/github.com/faryon93/handlers)
+[![Last Release](https://img.shields.io/github/release/faryon93/handlers.svg)](https://github.com/faryon93/handlers/releases)
 
 A set of frequently used Go http handlers and middleware functions.
 
