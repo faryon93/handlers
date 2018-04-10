@@ -73,6 +73,11 @@ func Paged(defaultLimit string) Adapter {
                 return
             }
 
+            if skip < 0 || limit < 1 {
+                http.Error(w,"invalid paging value", http.StatusNotAcceptable)
+                return
+            }
+
             ctx := context.WithValue(r.Context(), ctxPageSkip, skip)
             ctx = context.WithValue(ctx, ctxPageLimit, limit)
             h.ServeHTTP(w, r.WithContext(ctx))
