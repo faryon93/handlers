@@ -31,6 +31,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/handlers"
+	"net/http"
 )
 
 // ---------------------------------------------------------------------------------------
@@ -42,19 +43,45 @@ func CORS(origins ...string) Adapter {
 	methods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PATCH", "DELETE"})
 	headers := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
 	validator := handlers.AllowedOriginValidator(func(requestOrigin string) bool {
-		originUrl, err := url.Parse(requestOrigin)
-		if err != nil {
-			return false
-		}
-
-		for _, origin := range origins {
-			if strings.HasSuffix(originUrl.Hostname(), origin) {
-				return true
-			}
-		}
-
-		return false
+		return isOriginValid(origins, requestOrigin)
 	})
 
 	return handlers.CORS(methods, headers, validator, handlers.AllowCredentials())
+}
+
+// RestrictOrigin prevents further processing if the request origin
+// is not on the origins list.
+func RestrictOrigin(origins ...string) Adapter {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			origin := r.Header.Get("Origin")
+			if origin != "" && !isOriginValid(origins, origin) {
+				http.Error(w, "origin restriction", http.StatusForbidden)
+				return
+			}
+
+			h.ServeHTTP(w, r)
+		})
+	}
+
+}
+
+// ---------------------------------------------------------------------------------------
+//  private functions
+// ---------------------------------------------------------------------------------------
+
+// Returns true if the given requestOrigin is on the origins list.
+func isOriginValid(origins []string, requestOrigin string) bool {
+	originUrl, err := url.Parse(requestOrigin)
+	if err != nil {
+		return false
+	}
+
+	for _, origin := range origins {
+		if strings.HasSuffix(originUrl.Hostname(), origin) {
+			return true
+		}
+	}
+
+	return false
 }
