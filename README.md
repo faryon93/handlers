@@ -15,8 +15,8 @@ A set of frequently used Go http handlers and middleware functions.
 
 | Handler       | Description                                                         |
 | ------------- | ------------------------------------------------------------------- |
-| NoRobots()    | Writes a robots.txt file, which disallows the access to everything. |
 | Forbidded()   | Default 403 forbidden handler.                                      |
+| NoRobots()    | Writes a robots.txt file, which disallows the access to everything. |
 
 ## Content: Adapters
 
@@ -24,7 +24,8 @@ Adapter functions can be chained with the real handler function or other adapter
 
 | Adapter           | Description                                                       |
 | ----------------- | ----------------------------------------------------------------- |
-| Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey.  |
-| Enabled(en)       | Denys access if en is false                                       |
 | Benchmark         | Logs the execution time of every request using logrus             |
+| Enabled(en)       | Denys access if en is false                                       |
+| Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey   |
 | Paged(limit)      | Paging: Parses skip and limit from query parameters               |
+| Recaptcha(key)    | Restricts access if recaptcha is invalid                          |
