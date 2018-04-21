@@ -38,7 +38,7 @@ import (
 // ---------------------------------------------------------------------------------------
 
 type recaptchaInput struct {
-	Response string `json:"g-recaptcha-response"`
+	Response string `json:"g-recaptcha-response" schema:"g-recaptcha-response"`
 }
 
 // ---------------------------------------------------------------------------------------
