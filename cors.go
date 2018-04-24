@@ -29,9 +29,9 @@ package handlers
 import (
 	"net/url"
 	"strings"
+	"net/http"
 
 	"github.com/gorilla/handlers"
-	"net/http"
 )
 
 // ---------------------------------------------------------------------------------------
@@ -39,14 +39,16 @@ import (
 // ---------------------------------------------------------------------------------------
 
 // CORS creates a gorilla CORS adapter.
-func CORS(origins ...string) Adapter {
+// The age parameter is in seconds.
+func CORS(age int, origins ...string) Adapter {
 	methods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PATCH", "DELETE"})
 	headers := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
 	validator := handlers.AllowedOriginValidator(func(requestOrigin string) bool {
 		return isOriginValid(origins, requestOrigin)
 	})
 
-	return handlers.CORS(methods, headers, validator, handlers.AllowCredentials())
+	return handlers.CORS(methods, headers, validator,
+		handlers.AllowCredentials(), handlers.MaxAge(age))
 }
 
 // RestrictOrigin prevents further processing if the request origin
