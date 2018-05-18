@@ -22,10 +22,12 @@ A set of frequently used Go http handlers and middleware functions.
 
 Adapter functions can be chained with the real handler function or other adapter functions.
 
-| Adapter           | Description                                                       |
-| ----------------- | ----------------------------------------------------------------- |
-| Benchmark         | Logs the execution time of every request using logrus             |
-| Enabled(en)       | Denys access if en is false                                       |
-| Keyed(reqKey)     | Restrict access to requests, having param "key" matching reqKey   |
-| Paged(limit)      | Paging: Parses skip and limit from query parameters               |
-| Recaptcha(key)    | Restricts access if recaptcha is invalid                          |
+| Adapter                   | Description                                                       |
+| ------------------------- | ----------------------------------------------------------------- |
+| CORS(age, orgins)         | Configures gorilla/handlers/cors in a convenient way              |
+| Benchmark()               | Logs the execution time of every request using logrus             |
+| Enabled(en)               | Denys access if en is false                                       |
+| Keyed(reqKey)             | Restrict access to requests, having param "key" matching reqKey   |
+| Paged(limit)              | Paging: Parses skip and limit from query parameters               |
+| Recaptcha(key)            | Restricts access if recaptcha is invalid                          |
+| RestrictOrigin(orgins...) | Rejects all request having an origin which is not on the list     |
