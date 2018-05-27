@@ -63,18 +63,18 @@ func Paged(defaultLimit string) Adapter {
 
             skip, err := strconv.Atoi(skipStr)
             if err != nil {
-                http.Error(w, "paging error: " + err.Error(), http.StatusNotAcceptable)
+                http.Error(w, "paging error: " + err.Error(), http.StatusBadRequest)
                 return
             }
 
             limit, err := strconv.Atoi(limitStr)
             if err != nil {
-                http.Error(w, "paging error: " + err.Error(), http.StatusNotAcceptable)
+                http.Error(w, "paging error: " + err.Error(), http.StatusBadRequest)
                 return
             }
 
             if skip < 0 || limit < 1 {
-                http.Error(w,"invalid paging value", http.StatusNotAcceptable)
+                http.Error(w,"invalid paging value", http.StatusBadRequest)
                 return
             }
 

@@ -62,14 +62,14 @@ func Recaptcha(key string) Adapter {
 				err := util.ParseBody(r, &form)
 				if err != nil {
 					msg := "mailformed request: " + err.Error()
-					http.Error(w, msg, http.StatusNotAcceptable)
+					http.Error(w, msg, http.StatusBadRequest)
 					return
 				}
 
 				// verfiy the captcha with the captcha server
 				ok := captcha.VerifyResponse(form.Response)
 				if !ok {
-					http.Error(w, "invalid recaptcha response", http.StatusNotAcceptable)
+					http.Error(w, "invalid recaptcha response", http.StatusBadRequest)
 					return
 				}
 
