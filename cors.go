@@ -41,13 +41,20 @@ import (
 // CORS creates a gorilla CORS adapter.
 // The age parameter is in seconds.
 func CORS(age int, origins ...string) Adapter {
-	methods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PATCH", "DELETE"})
-	headers := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{
+		"GET", "HEAD", "POST", "PATCH", "DELETE",
+	})
+	headers := handlers.AllowedHeaders([]string{
+		"Content-Type", "Authorization", "X-Body-Signature",
+	})
+    exposed := handlers.ExposedHeaders([]string{
+        "X-Body-Signature",
+    })
 	validator := handlers.AllowedOriginValidator(func(requestOrigin string) bool {
 		return isOriginValid(origins, requestOrigin)
 	})
 
-	return handlers.CORS(methods, headers, validator,
+	return handlers.CORS(methods, headers, validator, exposed,
 		handlers.AllowCredentials(), handlers.MaxAge(age))
 }
 
