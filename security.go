@@ -28,6 +28,7 @@ package handlers
 
 import (
 	"net/http"
+	"github.com/faryon93/handlers/opt"
 )
 
 // ---------------------------------------------------------------------------------------
@@ -36,12 +37,14 @@ import (
 
 // Keyed restricts the execution of fn() to requests which
 // have the query parameter "key" matched with the user supplied key.
-func Keyed(key string) Adapter {
+func Keyed(key string, opts ...interface{}) Adapter {
+	httpError := opt.GetErrorHandler(opts)
+
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestKey := r.URL.Query().Get("key")
 			if key != "" && requestKey != key {
-				Forbidden(w, r)
+				httpError(w, "forbidden", http.StatusForbidden)
 				return
 			}
 
@@ -51,11 +54,13 @@ func Keyed(key string) Adapter {
 }
 
 // Enabled denys access to fn() if enabled is false.
-func Enabled(enabled bool) Adapter {
+func Enabled(enabled bool, opts ...interface{}) Adapter {
+	httpError := opt.GetErrorHandler(opts)
+
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if !enabled {
-				http.Error(w, "handler not enabled", http.StatusNotFound)
+				httpError(w, "endpoint not enabled", http.StatusNotFound)
 				return
 			}
 

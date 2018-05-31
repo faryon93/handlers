@@ -31,6 +31,8 @@ import (
 
 	"github.com/faryon93/util"
 	"github.com/haisum/recaptcha"
+
+	"github.com/faryon93/handlers/opt"
 )
 
 // ---------------------------------------------------------------------------------------
@@ -48,8 +50,9 @@ type recaptchaInput struct {
 // Recaptcha verifies the given recaptcha response.
 // If the verification failes the processing of the request is canceled.
 // If the key parameter is empty, the captcha check is bypassed.
-func Recaptcha(key string) Adapter {
+func Recaptcha(key string, opts ...interface{}) Adapter {
 	captcha := recaptcha.R{Secret: key}
+	httpError := opt.GetErrorHandler(opts)
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -61,15 +64,14 @@ func Recaptcha(key string) Adapter {
 				var form recaptchaInput
 				err := util.ParseBody(r, &form)
 				if err != nil {
-					msg := "mailformed request: " + err.Error()
-					http.Error(w, msg, http.StatusBadRequest)
+					httpError(w, "mailformed request: "+err.Error(), http.StatusBadRequest)
 					return
 				}
 
 				// verfiy the captcha with the captcha server
 				ok := captcha.VerifyResponse(form.Response)
 				if !ok {
-					http.Error(w, "invalid recaptcha response", http.StatusBadRequest)
+					httpError(w, "invalid recaptcha response", http.StatusBadRequest)
 					return
 				}
 

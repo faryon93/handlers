@@ -30,6 +30,8 @@ import (
     "net/http"
     "strconv"
     "context"
+
+    "github.com/faryon93/handlers/opt"
 )
 
 // ---------------------------------------------------------------------------------------
@@ -47,7 +49,9 @@ const (
 // ---------------------------------------------------------------------------------------
 
 // Paged parses the limit and skip parameter and stores it to the requests context.
-func Paged(defaultLimit string) Adapter {
+func Paged(defaultLimit string, opts ...interface{}) Adapter {
+    httpError := opt.GetErrorHandler(opts)
+
     return func(h http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
             skipStr := r.URL.Query().Get("skip")
@@ -63,18 +67,18 @@ func Paged(defaultLimit string) Adapter {
 
             skip, err := strconv.Atoi(skipStr)
             if err != nil {
-                http.Error(w, "paging error: " + err.Error(), http.StatusBadRequest)
+                httpError(w, "paging error: " + err.Error(), http.StatusBadRequest)
                 return
             }
 
             limit, err := strconv.Atoi(limitStr)
             if err != nil {
-                http.Error(w, "paging error: " + err.Error(), http.StatusBadRequest)
+                httpError(w, "paging error: " + err.Error(), http.StatusBadRequest)
                 return
             }
 
             if skip < 0 || limit < 1 {
-                http.Error(w,"invalid paging value", http.StatusBadRequest)
+                httpError(w,"invalid paging value", http.StatusBadRequest)
                 return
             }
 

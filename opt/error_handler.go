@@ -1,4 +1,4 @@
-package handlers
+package opt
 
 // handlers
 // Copyright (C) 2018 Maximilian Pachl
@@ -27,74 +27,31 @@ package handlers
 // ---------------------------------------------------------------------------------------
 
 import (
-	"net/url"
-	"strings"
 	"net/http"
-
-	"github.com/gorilla/handlers"
-
-	"github.com/faryon93/handlers/opt"
 )
+
+// ---------------------------------------------------------------------------------------
+//  types
+// ---------------------------------------------------------------------------------------
+
+// ErrorHandler transforms the http error emitted by an adapter.
+type ErrorHandler func(w http.ResponseWriter, message string, code int)
 
 // ---------------------------------------------------------------------------------------
 //  public functions
 // ---------------------------------------------------------------------------------------
 
-// CORS creates a gorilla CORS adapter.
-// The age parameter is in seconds.
-func CORS(age int, origins ...string) Adapter {
-	methods := handlers.AllowedMethods([]string{
-		"GET", "HEAD", "POST", "PATCH", "DELETE",
-	})
-	headers := handlers.AllowedHeaders([]string{
-		"Content-Type", "Authorization", "X-Body-Signature",
-	})
-    exposed := handlers.ExposedHeaders([]string{
-        "X-Body-Signature",
-    })
-	validator := handlers.AllowedOriginValidator(func(requestOrigin string) bool {
-		return isOriginValid(origins, requestOrigin)
-	})
-
-	return handlers.CORS(methods, headers, validator, exposed,
-		handlers.AllowCredentials(), handlers.MaxAge(age))
-}
-
-// RestrictOrigin prevents further processing if the request origin
-// is not on the origins list.
-func RestrictOrigin(origins []string, opts ...interface{}) Adapter {
-	httpError := opt.GetErrorHandler(opts)
-
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			origin := r.Header.Get("Origin")
-			if origin != "" && !isOriginValid(origins, origin) {
-				httpError(w, "origin restriction", http.StatusForbidden)
-				return
-			}
-
-			h.ServeHTTP(w, r)
-		})
-	}
-
-}
-
-// ---------------------------------------------------------------------------------------
-//  private functions
-// ---------------------------------------------------------------------------------------
-
-// Returns true if the given requestOrigin is on the origins list.
-func isOriginValid(origins []string, requestOrigin string) bool {
-	originUrl, err := url.Parse(requestOrigin)
-	if err != nil {
-		return false
-	}
-
-	for _, origin := range origins {
-		if strings.HasSuffix(originUrl.Hostname(), origin) {
-			return true
+// GetErrorHandler returns the error handler from a set of adapter options.
+func GetErrorHandler(opts []interface{}) ErrorHandler {
+	// find the first error transformation option
+	for _, opt := range opts {
+		if fn, ok := opt.(ErrorHandler); ok {
+			return fn
 		}
 	}
 
-	return false
+	// the default transformation does noting
+	return func(w http.ResponseWriter, message string, code int) {
+		http.Error(w, message, code)
+	}
 }
