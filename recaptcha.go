@@ -28,6 +28,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/faryon93/util"
 	"github.com/haisum/recaptcha"
@@ -51,7 +52,6 @@ type recaptchaInput struct {
 // If the verification failes the processing of the request is canceled.
 // If the key parameter is empty, the captcha check is bypassed.
 func Recaptcha(key string, opts ...interface{}) Adapter {
-	captcha := recaptcha.R{Secret: key}
 	httpError := opt.GetErrorHandler(opts)
 
 	return func(h http.Handler) http.Handler {
@@ -69,9 +69,10 @@ func Recaptcha(key string, opts ...interface{}) Adapter {
 				}
 
 				// verfiy the captcha with the captcha server
+				captcha := recaptcha.R{Secret: key}
 				ok := captcha.VerifyResponse(form.Response)
 				if !ok {
-					httpError(w, "invalid recaptcha response", http.StatusBadRequest)
+					httpError(w, recaptchaError(&captcha), http.StatusBadRequest)
 					return
 				}
 
@@ -81,4 +82,17 @@ func Recaptcha(key string, opts ...interface{}) Adapter {
 			h.ServeHTTP(w, r)
 		})
 	}
+}
+// ---------------------------------------------------------------------------------------
+//  private functions
+// ---------------------------------------------------------------------------------------
+
+// recaptchaError properly formats the last recaptcha errors.
+func recaptchaError(captcha *recaptcha.R) string {
+	errors := captcha.LastError()
+	if len(errors) <= 1 {
+		return "unknown"
+	}
+
+	return strings.Join(errors[1:], ", ")
 }
